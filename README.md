@@ -1,5 +1,7 @@
 # api-automation-sanbercode
 
+API automation submission by Sri Puji Astuti
+
 ## Description
 
 This repository is used for assignments reference of the Sanbercode Bootcamp Program.
