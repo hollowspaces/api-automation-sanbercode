@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository is used for assignments reference of the Sanbercode Employee Program.
+This repository is used for assignments reference of the Sanbercode Bootcamp Program.
 
 ## Installation
 
