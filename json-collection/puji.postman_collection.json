@@ -1,0 +1,534 @@
+{
+	"info": {
+		"_postman_id": "89d97886-30a7-4ee7-acb2-107c044406c9",
+		"name": "API Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37164719"
+	},
+	"item": [
+		{
+			"name": "API Authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if the status code is 201\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Check if the response time is less than 1000ms\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"// Verify that the access token is not null\r",
+							"pm.test(\"Access token is not null\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.accessToken).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"token\", pm.response.json().accessToken)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var name = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
+							"var email = pm.variables.replaceIn(name + \"@gmail.com\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"name\", name);\r",
+							"pm.collectionVariables.set(\"email\", email)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"clientName\": \"{{name}}\",\n   \"clientEmail\": \"{{email}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/api-clients/",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"api-clients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if the status code is 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Check if the response time is less than 500ms\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"// Verify that the status in the response message is 'OK'\r",
+							"pm.test(\"Response message status is 'OK'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"OK\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/status",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if the status code is 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Check if the response time is less than 500ms\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"// Verify all values in the response message are correct and not null based on dynamic values\r",
+							"pm.test(\"Verify all values in the response message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Set environment variables\r",
+							"    pm.environment.set(\"expected_id\", jsonData.id);\r",
+							"    pm.environment.set(\"expected_name\", jsonData.name);\r",
+							"    pm.environment.set(\"expected_author\", jsonData.author);\r",
+							"    pm.environment.set(\"expected_isbn\", jsonData.isbn);\r",
+							"    pm.environment.set(\"expected_type\", jsonData.type);\r",
+							"    pm.environment.set(\"expected_price\", jsonData.price);\r",
+							"    pm.environment.set(\"expected_current_stock\", jsonData[\"current-stock\"]);\r",
+							"    pm.environment.set(\"expected_available\", jsonData.available);\r",
+							"\r",
+							"    // Verify each value\r",
+							"    pm.expect(jsonData.id).to.not.be.null;\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"expected_id\"));\r",
+							"\r",
+							"    pm.expect(jsonData.name).to.not.be.null;\r",
+							"    pm.expect(jsonData.name).to.eql(pm.environment.get(\"expected_name\"));\r",
+							"\r",
+							"    pm.expect(jsonData.author).to.not.be.null;\r",
+							"    pm.expect(jsonData.author).to.eql(pm.environment.get(\"expected_author\"));\r",
+							"\r",
+							"    pm.expect(jsonData.isbn).to.not.be.null;\r",
+							"    pm.expect(jsonData.isbn).to.eql(pm.environment.get(\"expected_isbn\"));\r",
+							"\r",
+							"    pm.expect(jsonData.type).to.not.be.null;\r",
+							"    pm.expect(jsonData.type).to.eql(pm.environment.get(\"expected_type\"));\r",
+							"\r",
+							"    pm.expect(jsonData.price).to.not.be.null;\r",
+							"    pm.expect(jsonData.price).to.eql(pm.environment.get(\"expected_price\"));\r",
+							"\r",
+							"    pm.expect(jsonData[\"current-stock\"]).to.not.be.null;\r",
+							"    pm.expect(jsonData[\"current-stock\"]).to.eql(pm.environment.get(\"expected_current_stock\"));\r",
+							"\r",
+							"    pm.expect(jsonData.available).to.not.be.null;\r",
+							"    pm.expect(jsonData.available).to.eql(pm.environment.get(\"expected_available\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/books/1",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"books",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Set collection variables for use in other requests\r",
+							"pm.collectionVariables.set(\"orderID\", response.orderId);\r",
+							"\r",
+							"// Get bookID and cust name from request body\r",
+							"const requestBody = JSON.parse(pm.request.body.raw);\r",
+							"pm.collectionVariables.set(\"bookID\", requestBody.bookId);\r",
+							"pm.collectionVariables.set(\"custName\", requestBody.customerName);\r",
+							"\r",
+							"// Check if status code is 201\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Check if the response time is less than 1000ms\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"const expectedKeys = [\"created\", \"orderId\"];\r",
+							"expectedKeys.forEach((key) => \r",
+							"    pm.test(`Key ${key} is successfully shown`, function(){\r",
+							"        pm.expect(response).to.have.property(key);\r",
+							"    })\r",
+							");\r",
+							"\r",
+							"// Check order created\r",
+							"pm.test(\"Order successfully created\", function(){\r",
+							"    pm.expect(response.created).to.eql(true);\r",
+							"});\r",
+							"\r",
+							"// Check if order ID not null\r",
+							"pm.test(\"Order ID is not null\", function(){\r",
+							"    pm.expect(response.orderId).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1,\n  \"customerName\": \"Puji\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Check if status code is 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Check if the response time is less than 1000ms\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"// Verify all values\r",
+							"pm.test(\"Verify all values in the response message are correct\", function () {\r",
+							"    pm.expect(response.id).to.eql(pm.collectionVariables.get(\"orderID\"));\r",
+							"    pm.expect(response.bookId).to.eql(pm.collectionVariables.get(\"bookID\"));\r",
+							"    pm.expect(response.customerName).to.eql(pm.collectionVariables.get(\"custName\"));\r",
+							"});\r",
+							"\r",
+							"console.log(response);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders/{{orderID}}",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders",
+						"{{orderID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const orderID = pm.collectionVariables.get(\"orderID\");\r",
+							"\r",
+							"// Check if order ID is empty\r",
+							"if (!orderID) {\r",
+							"    console.error(\"OrderID is empty\");\r",
+							"    pm.test(\"OrderID should not be empty\", function () {\r",
+							"        pm.expect(orderID).to.exist.and.to.not.be.empty;\r",
+							"    });\r",
+							"} else {\r",
+							"    // continue if order ID is found\r",
+							"    if (pm.response.code === 404) {\r",
+							"        console.error(\"Order not found\");\r",
+							"        pm.test(\"Order should exist\", function () {\r",
+							"            pm.expect.fail(\"Order with ID \" + orderID + \" not found\");\r",
+							"        });\r",
+							"    } else {\r",
+							"        // Check if status code is 204\r",
+							"        pm.test(\"Status code is 204\", function () {\r",
+							"            pm.response.to.have.status(204);\r",
+							"        });\r",
+							"\r",
+							"        // Check if the response time is less than 1000ms\r",
+							"        pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"            pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"        });\r",
+							"\r",
+							"        console.log(\"Response status:\", pm.response.status);\r",
+							"        console.log(\"Response time:\", pm.response.responseTime, \"ms\");\r",
+							"        console.log(\"Deleted order ID:\", orderID);\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders/{{orderID}}",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders",
+						"{{orderID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "orderID",
+			"value": ""
+		},
+		{
+			"key": "bookID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "custName",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
